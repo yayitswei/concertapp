@@ -1,0 +1,19 @@
+<html>
+
+  <head>
+    <script src="http://code.jquery.com/jquery.min.js"></script>
+  </head>
+  <body>
+    <script>
+      function cycle(t, freq) {
+        return Math.round((255/2) * Math.sin(freq * t) + (255/2));
+      }
+
+      function changeColor(t) {
+        $("body").css("background-color", "rgb(" + cycle(t, 0.001) + ", " + cycle(t, 0.0005) + ", " + cycle(t, 0.002) + ")");
+      }
+
+      setInterval("changeColor(Date.now())", 10);
+    </script>
+  </body>
+</html>
