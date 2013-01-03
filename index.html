@@ -4,6 +4,7 @@
     <script src="http://code.jquery.com/jquery.min.js"></script>
   </head>
   <body>
+    <p id="time">123123</p>
     <script>
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
@@ -11,6 +12,7 @@
 
       function changeColor(t) {
         $("body").css("background-color", "rgb(" + cycle(t, 0.001) + ", " + cycle(t, 0.0005) + ", " + cycle(t, 0.002) + ")");
+        $("#time").text(Math.round(t/1000));
       }
 
       setInterval("changeColor(Date.now())", 10);
