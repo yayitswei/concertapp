@@ -66,6 +66,8 @@
         var start = Date.now();
         var xhr = $.getJSON('/time.json?t=' + start);
         xhr.done(function(response) {
+          strobePeriod = 60 * 1000 / parseFloat(response['bpm']);
+
           var clientTimeNow = Date.now();
           lastRtt = (clientTimeNow - start);
 
@@ -77,7 +79,6 @@
           shortestRtt = lastRtt;
           lastServerTime = parseFloat(response['time']) * 1000;
           var serverTimeNow = lastServerTime + lastRtt/2;
-          strobePeriod = 60 * 1000 / parseFloat(response['bpm']);
           var difference = serverTimeNow - clientTimeNow;
 
           // If the rtt is as high as the difference, the estimate probably
