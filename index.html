@@ -11,10 +11,13 @@
       Local difference: <span id='difference'></span>
     </p>
     <p>
-      RTT: <span id='rtt'></span>ms
+      Last RTT: <span id='last-rtt'></span>ms
     </p>
     <p>
-      Last fetched server time: <span id='last-server-time'></span>
+      Shortest RTT: <span id='shortest-rtt'></span>ms
+    </p>
+    <p>
+      Last fetched server time: <span id='last-server-time'></span>ms
     </p>
 
     <script>
@@ -30,8 +33,9 @@
         })();
 
       var serverTimeDifference = 0;
-      var rtt = 0;
       var lastServerTime = 0;
+      var lastRtt = 0;
+      var shortestRtt;
 
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
@@ -42,7 +46,8 @@
 
         $("body").css("background-color", "rgb(" + cycle(serverTime, 0.001) + ", " + cycle(serverTime, 0.0005) + ", " + cycle(serverTime, 0.002) + ")");
         $("#server-time").text(Math.round(serverTime/1000));
-        $("#rtt").text(rtt);
+        $("#last-rtt").text(lastRtt);
+        $("#shortest-rtt").text(shortestRtt);
         $("#difference").text(serverTimeDifference);
         $("#last-server-time").text(lastServerTime);
 
@@ -54,11 +59,16 @@
         var xhr = $.getJSON('/time.json');
         xhr.done(function(response) {
           var clientTimeNow = Date.now();
-          rtt = (clientTimeNow - start);
+          lastRtt = (clientTimeNow - start);
 
+          // Don't bother with a less accurate time
+          if (shortestRtt && shortestRtt < lastRtt) {
+            return;
+          }
+
+          shortestRtt = lastRtt;
           lastServerTime = parseFloat(response['time']) * 1000;
-          var serverTimeNow = lastServerTime + rtt/2;
-          console.log(rtt);
+          var serverTimeNow = lastServerTime + lastRtt/2;
           serverTimeDifference = serverTimeNow - clientTimeNow;
         });
       }
