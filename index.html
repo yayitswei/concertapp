@@ -5,13 +5,16 @@
   </head>
   <body>
     <p>
-      Estimated server time: <span id='serverTime'></span>
+      Estimated server time: <span id='server-time'></span>
     </p>
     <p>
       Local difference: <span id='difference'></span>
     </p>
     <p>
-      RTT: <span id='rtt'></span>
+      RTT: <span id='rtt'></span>ms
+    </p>
+    <p>
+      Last fetched server time: <span id='last-server-time'></span>
     </p>
 
     <script>
@@ -28,6 +31,7 @@
 
       var serverTimeDifference = 0;
       var rtt = 0;
+      var lastServerTime = 0;
 
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
@@ -37,9 +41,10 @@
         var serverTime = clientTime + serverTimeDifference;
 
         $("body").css("background-color", "rgb(" + cycle(serverTime, 0.001) + ", " + cycle(serverTime, 0.0005) + ", " + cycle(serverTime, 0.002) + ")");
-        $("#serverTime").text(Math.round(serverTime/1000));
+        $("#server-time").text(Math.round(serverTime/1000));
         $("#rtt").text(rtt);
         $("#difference").text(serverTimeDifference);
+        $("#last-server-time").text(lastServerTime);
 
         requestAnimationFrame(changeColor);
       }
@@ -49,13 +54,12 @@
         var xhr = $.getJSON('/time.json');
         xhr.done(function(response) {
           var clientTimeNow = Date.now();
-          rtt = (clientTimeNow - start) / 2;
+          rtt = (clientTimeNow - start);
 
-          var serverTimeThen = response['time'] * 1000;
-          var serverTimeNow = serverTimeThen + rtt;
+          lastServerTime = parseFloat(response['time']) * 1000;
+          var serverTimeNow = lastServerTime + rtt/2;
           console.log(rtt);
           serverTimeDifference = serverTimeNow - clientTimeNow;
-          console.log("Time difference: " + serverTimeDifference);
         });
       }
 
