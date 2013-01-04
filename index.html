@@ -6,10 +6,17 @@
   <body>
     <p id="time">123123</p>
     <script>
-      var requestAnimationFrame = (window.requestAnimationFrame ||
-                                   window.mozRequestAnimationFrame ||
-                                   window.webkitRequestAnimationFrame ||
-                                   window.msRequestAnimationFrame);
+      var requestAnimationFrame = (function(){
+          return  window.requestAnimationFrame       ||
+                  window.webkitRequestAnimationFrame ||
+                  window.mozRequestAnimationFrame    ||
+                  window.oRequestAnimationFrame      ||
+                  window.msRequestAnimationFrame     ||
+                  function( callback ){
+                    window.setTimeout(function() { callback(Date.now()); }, 1000 / 60);
+                  };
+        })();
+
       var serverTimeDifference = 0;
 
       function cycle(t, freq) {
