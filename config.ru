@@ -6,4 +6,6 @@ map '/time.json' do
   }
 end
 
-run Rack::File.new('.')
+use Rack::Static, :urls => ['/'], :index => 'index.html'
+
+run lambda { |*| }
