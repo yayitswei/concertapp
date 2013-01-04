@@ -6,16 +6,41 @@
   <body>
     <p id="time">123123</p>
     <script>
+      var requestAnimationFrame = (window.requestAnimationFrame ||
+                                   window.mozRequestAnimationFrame ||
+                                   window.webkitRequestAnimationFrame ||
+                                   window.msRequestAnimationFrame);
+      var serverTimeDifference = 0;
+
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
       }
 
-      function changeColor(t) {
-        $("body").css("background-color", "rgb(" + cycle(t, 0.001) + ", " + cycle(t, 0.0005) + ", " + cycle(t, 0.002) + ")");
-        $("#time").text(Math.round(t/1000));
+      function changeColor(clientTime) {
+        clientTime += serverTimeDifference;
+
+        $("body").css("background-color", "rgb(" + cycle(clientTime, 0.001) + ", " + cycle(clientTime, 0.0005) + ", " + cycle(clientTime, 0.002) + ")");
+        $("#time").text(Math.round(clientTime/1000));
+
+        requestAnimationFrame(changeColor);
       }
 
-      setInterval("changeColor(Date.now())", 10);
+      function syncClock() {
+        var start = Date.now();
+        var xhr = $.getJSON('/time.json');
+        xhr.done(function(response) {
+          var clientTimeNow = Date.now();
+          var lag = clientTimeNow - start;
+
+          var serverTimeThen = response['time'] * 1000;
+          var serverTimeNow = serverTimeThen + (lag/2);
+          serverTimeDifference = serverTimeNow - clientTimeNow;
+          console.log("Time difference: " + serverTimeDifference);
+        });
+      }
+      setInterval(syncClock, 5000);
+
+      requestAnimationFrame(changeColor);
     </script>
   </body>
 </html>
