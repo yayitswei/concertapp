@@ -19,6 +19,7 @@
     <p>
       Last fetched server time: <span id='last-server-time'></span>ms
     </p>
+    <div id="beat-counter"></div>
 
     <script>
       var requestAnimationFrame = (function(){
@@ -37,6 +38,7 @@
       var lastRtt = 0;
       var shortestRtt;
       var strobePeriod = 60 * 1000 / 80;// parseFloat(response['bpm']);
+      var beatsPerMeasure = 4;
 
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
@@ -44,14 +46,15 @@
 
       function changeColor(clientTime) {
         var serverTime = clientTime + serverTimeDifference;
-        var offset = (Math.round(serverTime / strobePeriod) % 2) * 3000;
+        var beat = (Math.round(serverTime / strobePeriod) % beatsPerMeasure);
+        $("#beat-counter").text(beat);
 
         $("#server-time").text(Math.round(serverTime/1000));
         $("#last-rtt").text(lastRtt);
         $("#shortest-rtt").text(shortestRtt);
-        $("body").css("background-color", "rgb(" + cycle(serverTime + offset, 0.001) + ", "
-                                                 + cycle(serverTime + offset, 0.0005) + ", "
-                                                 + cycle(serverTime + offset, 0.002) + ")");
+        $("body").css("background-color", "rgb(" + cycle(serverTime, 0.001) + ", "
+                                                 + cycle(serverTime, 0.0005) + ", "
+                                                 + cycle(serverTime, 0.002) + ")");
         $("#difference").text(serverTimeDifference);
         $("#last-server-time").text(lastServerTime);
 
