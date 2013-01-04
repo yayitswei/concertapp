@@ -28,8 +28,8 @@
                   window.mozRequestAnimationFrame    ||
                   window.oRequestAnimationFrame      ||
                   window.msRequestAnimationFrame     ||
-                  function( callback ){
-                    window.setTimeout(function() { callback(Date.now()); }, 1000 / 60);
+                  function( callback ) {
+                    window.setTimeout(function() { callback(); }, 1000 / 60);
                   };
         })();
 
@@ -44,7 +44,8 @@
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
       }
 
-      function changeColor(clientTime) {
+      function changeColor() {
+        var clientTime = Date.now();
         var serverTime = clientTime + serverTimeDifference;
         var beat = (Math.round(serverTime / strobePeriod) % beatsPerMeasure);
         $("#beat-counter").text(beat);
