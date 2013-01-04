@@ -4,7 +4,16 @@
     <script src="http://code.jquery.com/jquery.min.js"></script>
   </head>
   <body>
-    <p id="time">123123</p>
+    <p>
+      Estimated server time: <span id='serverTime'></span>
+    </p>
+    <p>
+      Local difference: <span id='difference'></span>
+    </p>
+    <p>
+      RTT: <span id='rtt'></span>
+    </p>
+
     <script>
       var requestAnimationFrame = (function(){
           return  window.requestAnimationFrame       ||
@@ -18,16 +27,19 @@
         })();
 
       var serverTimeDifference = 0;
+      var rtt = 0;
 
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
       }
 
       function changeColor(clientTime) {
-        clientTime += serverTimeDifference;
+        var serverTime = clientTime + serverTimeDifference;
 
-        $("body").css("background-color", "rgb(" + cycle(clientTime, 0.001) + ", " + cycle(clientTime, 0.0005) + ", " + cycle(clientTime, 0.002) + ")");
-        $("#time").text(Math.round(clientTime/1000));
+        $("body").css("background-color", "rgb(" + cycle(serverTime, 0.001) + ", " + cycle(serverTime, 0.0005) + ", " + cycle(serverTime, 0.002) + ")");
+        $("#serverTime").text(Math.round(serverTime/1000));
+        $("#rtt").text(rtt);
+        $("#difference").text(serverTimeDifference);
 
         requestAnimationFrame(changeColor);
       }
@@ -37,14 +49,17 @@
         var xhr = $.getJSON('/time.json');
         xhr.done(function(response) {
           var clientTimeNow = Date.now();
-          var lag = clientTimeNow - start;
+          rtt = (clientTimeNow - start) / 2;
 
           var serverTimeThen = response['time'] * 1000;
-          var serverTimeNow = serverTimeThen + (lag/2);
+          var serverTimeNow = serverTimeThen + rtt;
+          console.log(rtt);
           serverTimeDifference = serverTimeNow - clientTimeNow;
           console.log("Time difference: " + serverTimeDifference);
         });
       }
+
+      syncClock();
       setInterval(syncClock, 5000);
 
       requestAnimationFrame(changeColor);
