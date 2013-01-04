@@ -64,7 +64,7 @@
 
       function syncClock() {
         var start = Date.now();
-        var xhr = $.getJSON('/time.json');
+        var xhr = $.getJSON('/time.json?t=' + start);
         xhr.done(function(response) {
           var clientTimeNow = Date.now();
           lastRtt = (clientTimeNow - start);
