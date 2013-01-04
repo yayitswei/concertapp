@@ -2,8 +2,18 @@
 
   <head>
     <script src="http://code.jquery.com/jquery.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/jquery.spritely/0.6.1/jquery.spritely-0.6.1.min.js"></script>
+    <style>
+      #dance {
+        width: 88;
+        height: 120;
+        background-image: url(http://www.raywenderlich.com/wp-content/uploads/2010/03/grossini_dance_atlas1.png);
+        background-position:0px 0px
+      }
+    </style>
   </head>
   <body>
+    <div id="dance"></div>
     <p>
       Estimated server time: <span id='server-time'></span>
     </p>
@@ -22,6 +32,10 @@
     <div id="beat-counter"></div>
 
     <script>
+      var spriteWidth = 88;
+      var spriteHeight = 120;
+      var spriteCols = 5;
+      var spriteRows = 2;
       var requestAnimationFrame = (function(){
           return  window.requestAnimationFrame       ||
                   window.webkitRequestAnimationFrame ||
@@ -44,11 +58,18 @@
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
       }
 
+      function setFrame(frame) {
+        x = (frame % spriteCols) * spriteWidth;
+        y = (Math.floor(frame / spriteCols) % spriteRows) * spriteHeight;
+        $("#dance").css('background-position', x + "px " + y + "px");
+      }
+
       function changeColor() {
         var clientTime = Date.now();
         var serverTime = clientTime + serverTimeDifference;
         var beat = (Math.round(serverTime / strobePeriod) % beatsPerMeasure);
         $("#beat-counter").text(beat);
+        setFrame(beat + 5);
 
         $("#server-time").text(Math.round(serverTime/1000));
         $("#last-rtt").text(lastRtt);
