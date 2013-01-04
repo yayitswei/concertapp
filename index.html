@@ -36,6 +36,7 @@
       var lastServerTime = 0;
       var lastRtt = 0;
       var shortestRtt;
+      var strobePeriod = 60 * 1000 / 80;// parseFloat(response['bpm']);
 
       function cycle(t, freq) {
         return Math.round((255/2) * Math.sin(freq * t) + (255/2));
@@ -43,11 +44,14 @@
 
       function changeColor(clientTime) {
         var serverTime = clientTime + serverTimeDifference;
+        var offset = (Math.round(serverTime / strobePeriod) % 2) * 3000;
 
-        $("body").css("background-color", "rgb(" + cycle(serverTime, 0.001) + ", " + cycle(serverTime, 0.0005) + ", " + cycle(serverTime, 0.002) + ")");
         $("#server-time").text(Math.round(serverTime/1000));
         $("#last-rtt").text(lastRtt);
         $("#shortest-rtt").text(shortestRtt);
+        $("body").css("background-color", "rgb(" + cycle(serverTime + offset, 0.001) + ", "
+                                                 + cycle(serverTime + offset, 0.0005) + ", "
+                                                 + cycle(serverTime + offset, 0.002) + ")");
         $("#difference").text(serverTimeDifference);
         $("#last-server-time").text(lastServerTime);
 
@@ -69,6 +73,7 @@
           shortestRtt = lastRtt;
           lastServerTime = parseFloat(response['time']) * 1000;
           var serverTimeNow = lastServerTime + lastRtt/2;
+          strobePeriod = 60 * 1000 / parseFloat(response['bpm']);
           serverTimeDifference = serverTimeNow - clientTimeNow;
         });
       }
