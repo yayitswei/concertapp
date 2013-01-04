@@ -78,7 +78,16 @@
           lastServerTime = parseFloat(response['time']) * 1000;
           var serverTimeNow = lastServerTime + lastRtt/2;
           strobePeriod = 60 * 1000 / parseFloat(response['bpm']);
-          serverTimeDifference = serverTimeNow - clientTimeNow;
+          var difference = serverTimeNow - clientTimeNow;
+
+          // If the rtt is as high as the difference, the estimate probably
+          // isn't precise enough to be useful.
+          if (Math.abs(difference) < lastRtt) {
+            return;
+          }
+
+          serverTimeDifference = difference;
+          shortestRtt = lastRtt;
         });
       }
 
