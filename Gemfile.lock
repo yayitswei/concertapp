@@ -1,16 +1,48 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    backports (2.6.5)
+    coffee-script (2.2.0)
+      coffee-script-source
+      execjs
+    coffee-script-source (1.4.0)
     daemons (1.1.9)
     eventmachine (1.0.0)
+    execjs (1.4.0)
+      multi_json (~> 1.0)
+    haml (3.1.7)
+    multi_json (1.5.0)
     rack (1.4.1)
+    rack-asset-compiler (0.2.1)
+      rack
+    rack-protection (1.3.2)
+      rack
+    rack-test (0.6.2)
+      rack (>= 1.0)
+    sinatra (1.3.3)
+      rack (~> 1.3, >= 1.3.6)
+      rack-protection (~> 1.2)
+      tilt (~> 1.3, >= 1.3.3)
+    sinatra-contrib (1.3.2)
+      backports (>= 2.0)
+      eventmachine
+      rack-protection
+      rack-test
+      sinatra (~> 1.3.0)
+      tilt (~> 1.3)
     thin (1.5.0)
       daemons (>= 1.0.9)
       eventmachine (>= 0.12.6)
       rack (>= 1.0.0)
+    tilt (1.3.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  coffee-script
+  haml
+  rack-asset-compiler
+  sinatra
+  sinatra-contrib
   thin

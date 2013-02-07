@@ -1,37 +1,38 @@
-<html>
-
-  <head>
-    <script src="http://code.jquery.com/jquery.min.js"></script>
-    <script src="http://cdn.jsdelivr.net/jquery.spritely/0.6.1/jquery.spritely-0.6.1.min.js"></script>
-    <style>
+!!!5
+%html
+  %head
+    %script(src="http://code.jquery.com/jquery.min.js")
+    %script(src="http://cdn.jsdelivr.net/jquery.spritely/0.6.1/jquery.spritely-0.6.1.min.js")
+    :css
       #dance {
         width: 88;
         height: 120;
         background-image: url(http://www.raywenderlich.com/wp-content/uploads/2010/03/grossini_dance_atlas1.png);
         background-position:0px 0px
       }
-    </style>
-  </head>
-  <body>
-    <div id="dance"></div>
-    <p>
-      Estimated server time: <span id='server-time'></span>
-    </p>
-    <p>
-      Local difference: <span id='difference'></span>
-    </p>
-    <p>
-      Last RTT: <span id='last-rtt'></span>ms
-    </p>
-    <p>
-      Shortest RTT: <span id='shortest-rtt'></span>ms
-    </p>
-    <p>
-      Last fetched server time: <span id='last-server-time'></span>ms
-    </p>
-    <div id="beat-counter"></div>
+  %body
+    #dance
+    %p
+      Estimated server time: 
+      %span#server-time
+    %p
+      Local difference:
+      %span#difference
+    %p
+      Last RTT:
+      %span#last-rtt
+      ms
+    %p
+      Shortest RTT:
+      %span#shortest-rtt
+      ms
+    %p
+      Last fetched server time:
+      %span#last-server-time
+      ms
+    #beat-counter
 
-    <script>
+    :javascript
       var spriteWidth = 88;
       var spriteHeight = 120;
       var spriteCols = 5;
@@ -117,6 +118,3 @@
       setInterval(syncClock, 5000);
 
       requestAnimationFrame(changeColor);
-    </script>
-  </body>
-</html>
