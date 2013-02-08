@@ -4,7 +4,7 @@ require 'json'
 require 'rack/coffee_compiler'
 require 'sinatra'
 require 'sinatra/json'
-require 'rdio'
+require 'oauth'
 
 use Rack::CoffeeCompiler, :source_dir => 'coffeescripts', :url => '/javascripts'
 use Rack::Static, :urls => ['/javascripts']
@@ -40,7 +40,8 @@ get '/callback' do
   request_token = session[:request_token]
   session[:access_token] = request_token.get_access_token(
       :oauth_verifier => params[:oauth_verifier])
-  'OK!'
+
+  redirect '/rdio'
 end
 
 get '/time.json' do
@@ -48,8 +49,10 @@ get '/time.json' do
 end
 
 get '/playback_token.json' do
-  Rdio.api.access_token = session[:access_token]
-  json :playbackToken => Rdio.api.getPlaybackToken('localhost')
+  access_token = session[:access_token]
+  response = access_token.post('/1/', 'method' => 'getPlaybackToken')
+  parsed = JSON.parse(response.body)
+  json :playbackToken => parsed['result']
 end
 
 run Sinatra::Application
