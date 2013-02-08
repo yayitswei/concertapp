@@ -9,7 +9,17 @@ require 'oauth'
 use Rack::CoffeeCompiler, :source_dir => 'coffeescripts', :url => '/javascripts'
 use Rack::Static, :urls => ['/javascripts']
 
+module Helpers
+  def rdio_api(method, params={})
+    access_token = session[:access_token]
+    response = access_token.post('/1/',  params.merge('method' => method))
+    parsed = JSON.parse(response.body)
+    parsed['result']
+  end
+end
+
 enable :sessions
+helpers Helpers
 
 get '/' do
   haml :index
@@ -48,11 +58,25 @@ get '/time.json' do
   json(time: Time.now.to_f, bpm: ENV['bpm'])
 end
 
+get '/foobar' do
+  url = 'http://www.rdio.com/artist/30_Seconds_To_Mars/album/This_Is_War_1/track/This_Is_War/'
+  rdio_api('getObjectFromUrl', 'url' => url)
+end
+
 get '/playback_token.json' do
-  access_token = session[:access_token]
-  response = access_token.post('/1/', 'method' => 'getPlaybackToken')
-  parsed = JSON.parse(response.body)
-  json :playbackToken => parsed['result']
+  result = rdio_api('getPlaybackToken', 'domain' => 'localhost')
+  json :playbackToken => result
+end
+
+get '/echonest_profile.json' do
+  body = Net::HTTP.get(
+      'developer.echonest.com',
+      '/api/v4/track/profile?id=rdio-US:track:t2410510&bucket=audio_summary&api_key=' + ENV['ECHONEST_API_KEY'])
+  parsed = JSON.parse(body)
+  analysis_url = parsed['response']['track']['audio_summary']['analysis_url']
+
+  content_type 'application/json'
+  Net::HTTP.get(URI(analysis_url))
 end
 
 run Sinatra::Application

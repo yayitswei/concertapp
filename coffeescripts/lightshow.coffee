@@ -6,7 +6,10 @@ $.getJSON '/playback_token.json', (response) ->
   $player.rdio(playbackToken)
 
   $player.bind 'ready.rdio', ->
-    $(this).rdio().play('a171827')
+    #$(this).rdio().play('a171827')
 
-  #$player.bind 'positionChanged.rdio', (position) ->
-  #  console.log(position)
+  #$player.bind 'positionChanged.rdio', (event) ->
+  #  console.log(event)
+
+  #$player.bind 'playingTrackChanged.rdio', (event) ->
+  #  console.log(event)
