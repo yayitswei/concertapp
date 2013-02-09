@@ -2,10 +2,12 @@ require 'rubygems'
 require 'bundler/setup'
 require 'json'
 require 'rack/coffee_compiler'
+require 'rack/cache'
 require 'sinatra'
 require 'sinatra/json'
 require 'oauth'
 
+use Rack::Cache
 use Rack::CoffeeCompiler, :source_dir => 'coffeescripts', :url => '/javascripts'
 use Rack::Static, :urls => ['/javascripts']
 
@@ -59,7 +61,8 @@ get '/time.json' do
 end
 
 get '/foobar' do
-  url = 'http://www.rdio.com/artist/30_Seconds_To_Mars/album/This_Is_War_1/track/This_Is_War/'
+  url = 'http://www.rdio.com/artist/30_Seconds_To_Mars/album/This_Is_War_1/track/Kings_and_Queens/'
+  #url = 'http://www.rdio.com/artist/30_Seconds_To_Mars/album/This_Is_War_1/track/This_Is_War/'
   rdio_api('getObjectFromUrl', 'url' => url)
 end
 
@@ -71,12 +74,30 @@ end
 get '/echonest_profile.json' do
   body = Net::HTTP.get(
       'developer.echonest.com',
-      '/api/v4/track/profile?id=rdio-US:track:t2410510&bucket=audio_summary&api_key=' + ENV['ECHONEST_API_KEY'])
+      "/api/v4/track/profile?id=rdio-US:track:#{params['rdio_id']}&bucket=audio_summary&api_key=#{ENV['ECHONEST_API_KEY']}")
   parsed = JSON.parse(body)
   analysis_url = parsed['response']['track']['audio_summary']['analysis_url']
 
   content_type 'application/json'
-  Net::HTTP.get(URI(analysis_url))
+
+  # cache for 1 hour
+  cache_control 'public', 'max-age=3600'
+
+  uri = URI(analysis_url)
+  http = Net::HTTP.new(uri.host, uri.port)
+  s3_request = Net::HTTP::Get.new(uri.request_uri)
+
+  # Forward If-Modified-Since request header to S3
+  if_modified_since = request.env['HTTP_IF_MODIFIED_SINCE']
+  if if_modified_since
+    s3_request['If-Modified-Since'] = if_modified_since
+  end
+
+  s3_response = http.request(s3_request)
+  response['Last-Modified'] = s3_response['Last-Modified']
+
+  status s3_response.code
+  s3_response.body
 end
 
 run Sinatra::Application

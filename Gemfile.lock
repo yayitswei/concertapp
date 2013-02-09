@@ -16,6 +16,8 @@ GEM
     rack (1.4.1)
     rack-asset-compiler (0.2.1)
       rack
+    rack-cache (1.2)
+      rack (>= 0.4)
     rack-protection (1.3.2)
       rack
     rack-test (0.6.2)
@@ -45,6 +47,7 @@ DEPENDENCIES
   haml
   oauth
   rack-asset-compiler
+  rack-cache
   sinatra
   sinatra-contrib
   thin

@@ -4,5 +4,33 @@
     %script(src="http://code.jquery.com/jquery.min.js")
     %script(src='/javascripts/jquery.rdio.js')
     %script(src="/javascripts/lightshow.js")
+    %link(href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon")
+
+    :css
+      body {
+        background-color: black;
+        color: white;
+        -webkit-transition: background-color 200ms linear;
+      }
+      body.on {
+        -webkit-transition: background-color 0s linear;
+        background-color: white;
+      }
+
   %body
     #player
+
+    %p
+      %a.play(href='#')
+        play
+      %a.pause(href='#')
+        pause
+    %p
+      position
+      %span.position
+    %p
+      confidence
+      %span.confidence
+    %p
+      index
+      %span.index
