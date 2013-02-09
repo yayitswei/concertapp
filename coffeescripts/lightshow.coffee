@@ -11,8 +11,12 @@ $ ->
   nextIndexToSchedule = 0
   echonest = undefined
 
+  faye = window.faye = new Faye.Client('http://localhost:5000/faye')
+  faye.subscribe '/foobar', (message) ->
+    console.log(message)
+
   $('a.play').click ->
-    rdio.play(rdioId, initialPosition: 220.0)
+    rdio.play(rdioId, initialPosition: 0.0)
     nextIndexToSchedule = 0
     false
 
@@ -29,7 +33,7 @@ $ ->
 
 
   getBeat = (index) ->
-    echonest['beats'][index]
+    echonest['tatums'][index]
 
   getFlashStart = (index) ->
     nudge = window.nudge || 0.0
@@ -41,8 +45,8 @@ $ ->
 
     while beatStart < position + 2.0
       if beatStart > position
-        if nextIndexToSchedule % 2 == 1
-          setTimeout(flash, (beatStart - position) * 1000)
+        #if nextIndexToSchedule % 2 == 0
+        setTimeout(flash, (beatStart - position) * 1000)
 
       nextIndexToSchedule++;
 
@@ -66,7 +70,6 @@ $ ->
 
   $.getJSON '/echonest_profile.json', {rdio_id: rdioId}, (response) ->
     console.log('echonest ready')
-    console.log(response)
     echonest = response
     window.echonest = echonest
     undefined

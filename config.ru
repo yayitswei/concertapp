@@ -6,10 +6,14 @@ require 'rack/cache'
 require 'sinatra'
 require 'sinatra/json'
 require 'oauth'
+require 'faye'
 
 use Rack::Cache
 use Rack::CoffeeCompiler, :source_dir => 'coffeescripts', :url => '/javascripts'
 use Rack::Static, :urls => ['/javascripts']
+
+Faye::WebSocket.load_adapter('thin')
+use Faye::RackAdapter, :mount => '/faye'
 
 module Helpers
   def rdio_api(method, params={})
