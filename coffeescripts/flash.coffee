@@ -1,4 +1,4 @@
-faye = new Faye.Client('http://localhost:5000/faye')
+faye = new Faye.Client(window.fayeEndpoint)
 
 flash = ->
   $body = $('body')

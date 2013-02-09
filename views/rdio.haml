@@ -1,12 +1,15 @@
 !!!5
 %html
   %head
+    :javascript
+      window.fayeEndpoint = '#{faye_endpoint}';
     %script(src="http://code.jquery.com/jquery.min.js")
     %script(src='/javascripts/jquery.rdio.js')
-    %script(src='/faye/client.js')
+    %script(src="#{faye_endpoint}/client.js")
     %script(src='/javascripts/lightshow.js')
     %script(src='/javascripts/clock.js')
     %script(src='/javascripts/flash.js')
+
     %link(href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon")
 
     :css
