@@ -29,3 +29,6 @@ syncClock = ->
 
 syncClock()
 setInterval(syncClock, 5000)
+
+window.getSyncTime = ->
+  Date.now() - serverTimeDifference

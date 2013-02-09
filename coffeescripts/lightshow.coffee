@@ -31,7 +31,7 @@ $ ->
     $('.position').text(position)
     beatStart = getFlashStart(nextIndexToSchedule)
 
-    now = Date.now()
+    now = window.getSyncTime()
 
     while beatStart < position + 10.0
       if nextIndexToSchedule % 2 == 0

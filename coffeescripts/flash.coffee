@@ -8,7 +8,7 @@ flash = ->
   , 20)
 
 faye.subscribe '/flash', (timestamp) ->
-  now = Date.now()
+  now = window.getSyncTime()
   if timestamp > now
     setTimeout(flash, timestamp - now)
 
