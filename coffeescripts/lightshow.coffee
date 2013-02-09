@@ -11,26 +11,14 @@ $ ->
   nextIndexToSchedule = 0
   echonest = undefined
 
-  faye = window.faye = new Faye.Client('http://localhost:5000/faye')
-  faye.subscribe '/foobar', (message) ->
-    console.log(message)
-
   $('a.play').click ->
-    rdio.play(rdioId, initialPosition: 0.0)
+    rdio.play(rdioId, initialPosition: 60.0)
     nextIndexToSchedule = 0
     false
 
   $('a.pause').click ->
     rdio.pause()
     false
-
-  flash = ->
-    $body = $('body')
-    $body.addClass('on')
-    setTimeout( ->
-      $body.removeClass('on')
-    , 20)
-
 
   getBeat = (index) ->
     echonest['tatums'][index]
@@ -43,10 +31,12 @@ $ ->
     $('.position').text(position)
     beatStart = getFlashStart(nextIndexToSchedule)
 
-    while beatStart < position + 2.0
-      if beatStart > position
-        #if nextIndexToSchedule % 2 == 0
-        setTimeout(flash, (beatStart - position) * 1000)
+    now = Date.now()
+
+    while beatStart < position + 10.0
+      if nextIndexToSchedule % 2 == 0
+        if beatStart > position
+          publishFlash(now + (beatStart - position) * 1000)
 
       nextIndexToSchedule++;
 
